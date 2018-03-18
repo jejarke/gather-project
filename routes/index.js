@@ -11,6 +11,26 @@ router.get('/items/create', async (req, res, next) => {
   res.render('create');
 });
 
+router.get('/items/:itemId', async (req, res, next) => {
+
+  const item = await Item.findById(req.params.itemId);
+  if(item.errors){
+    res.redirect('/');
+  } else {
+    res.render('single', {item});
+  }
+});
+
+router.post('/items/:itemId/delete', async (req, res, next) => {
+  await Item.findByIdAndRemove(req.params.itemId);
+  res.redirect('/');
+});
+
+router.get('/items/:itemId/update', async (req, res, next) => {
+  const item = await Item.findOne({ _id: req.params.itemId });
+  res.render('update', {item});
+});
+
 router.post('/items/create', async (req, res, next) => {
   const {title, description, imageUrl} = req.body;
   const newItem = new Item({title, description, imageUrl});
@@ -23,5 +43,6 @@ router.post('/items/create', async (req, res, next) => {
   }
 
 });
+
 
 module.exports = router;
